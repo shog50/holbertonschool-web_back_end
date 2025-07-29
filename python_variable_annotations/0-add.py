@@ -3,6 +3,7 @@
 Module that provides a type-annotated function to add two floats.
 """
 
+
 def add(a: float, b: float) -> float:
     """
     Adds two float numbers and returns the result.
@@ -15,4 +16,3 @@ def add(a: float, b: float) -> float:
         float: The sum of a and b.
     """
     return a + b
-
