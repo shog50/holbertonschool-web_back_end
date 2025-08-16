@@ -12,7 +12,6 @@ class Server:
     Server class to paginate a database of popular baby names
     with deletion-resilient hypermedia pagination.
     """
-
     DATA_FILE = "Popular_Baby_Names.csv"
 
     def __init__(self) -> None:
@@ -39,10 +38,16 @@ class Server:
         """
         if self.__indexed_dataset is None:
             dataset = self.dataset()
-            self.__indexed_dataset = {i: dataset[i] for i in range(len(dataset))}
+            self.__indexed_dataset = {
+                i: dataset[i] for i in range(len(dataset))
+            }
         return self.__indexed_dataset
 
-    def get_hyper_index(self, index: int = None, page_size: int = 10) -> Dict[str, Any]:
+    def get_hyper_index(
+        self,
+        index: int = None,
+        page_size: int = 10
+    ) -> Dict[str, Any]:
         """
         Return a dictionary with deletion-resilient hypermedia pagination.
 
@@ -60,12 +65,15 @@ class Server:
         """
         assert isinstance(index, int) and index >= 0
         indexed_data = self.indexed_dataset()
-        assert index < len(indexed_data)
+        max_index = max(indexed_data.keys())
+        assert index <= max_index
 
         data: List[List[str]] = []
         current_index: int = index
 
-        while len(data) < page_size and current_index < max(indexed_data.keys()) + 1:
+        # Skip missing indexes and collect page_size items
+        while (len(data) < page_size and
+               current_index <= max_index):
             if current_index in indexed_data:
                 data.append(indexed_data[current_index])
             current_index += 1
@@ -74,5 +82,5 @@ class Server:
             "index": index,
             "data": data,
             "page_size": len(data),
-            "next_index": current_index,
+            "next_index": current_index
         }
