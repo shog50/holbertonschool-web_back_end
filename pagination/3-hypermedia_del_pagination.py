@@ -1,30 +1,23 @@
 #!/usr/bin/env python3
 """
-Deletion-resilient hypermedia pagination.
+Deletion-resilient hypermedia pagination
 """
 
 import csv
-from typing import List, Dict, Any, Optional
+import math
+from typing import List, Dict
 
 
 class Server:
-    """
-    Server class to paginate a database of popular baby names
-    with deletion-resilient hypermedia pagination.
-    """
+    """Server class to paginate a database of popular baby names."""
     DATA_FILE = "Popular_Baby_Names.csv"
 
-    def __init__(self) -> None:
-        """Initialize the server with no dataset loaded yet."""
-        self.__dataset: Optional[List[List[str]]] = None
-        self.__indexed_dataset: Optional[Dict[int, List[str]]] = None
+    def __init__(self):
+        self.__dataset = None
+        self.__indexed_dataset = None
 
-    def dataset(self) -> List[List[str]]:
-        """
-        Return the cached dataset.
-        If not already loaded, read from the CSV file
-        and cache the content, skipping the header row.
-        """
+    def dataset(self) -> List[List]:
+        """Cached dataset"""
         if self.__dataset is None:
             with open(self.DATA_FILE) as f:
                 reader = csv.reader(f)
@@ -32,10 +25,8 @@ class Server:
             self.__dataset = dataset[1:]
         return self.__dataset
 
-    def indexed_dataset(self) -> Dict[int, List[str]]:
-        """
-        Return the dataset indexed by sorting position, starting at 0.
-        """
+    def indexed_dataset(self) -> Dict[int, List]:
+        """Dataset indexed by sorting position, starting at 0"""
         if self.__indexed_dataset is None:
             dataset = self.dataset()
             self.__indexed_dataset = {
@@ -43,37 +34,25 @@ class Server:
             }
         return self.__indexed_dataset
 
-    def get_hyper_index(
-        self,
-        index: int = None,
-        page_size: int = 10
-    ) -> Dict[str, Any]:
+    def get_hyper_index(self, index: int = None, page_size: int = 10) -> Dict:
         """
-        Return a dictionary with deletion-resilient hypermedia pagination.
-
-        Args:
-            index (int): The start index for the current page.
-            page_size (int): Number of records per page.
-
-        Returns:
-            Dict[str, Any]: {
-                'index': current start index,
-                'next_index': index to query next,
-                'page_size': number of items returned,
-                'data': list of dataset rows
-            }
+        Return a dictionary with:
+        - index: starting index
+        - next_index: index to query next
+        - page_size: number of items in current page
+        - data: actual data for the page
+        Handles deletions so user doesn't miss data.
         """
         assert isinstance(index, int) and index >= 0
         indexed_data = self.indexed_dataset()
-        max_index = max(indexed_data.keys())
-        assert index <= max_index
+        assert index < len(self.dataset())
 
-        data: List[List[str]] = []
-        current_index: int = index
+        data = []
+        current_index = index
+        keys = sorted(indexed_data.keys())
 
-        # Skip missing indexes and collect page_size items
-        while (len(data) < page_size and
-               current_index <= max_index):
+        # اجمع العناصر حتى نكمل الصفحة المطلوبة
+        while len(data) < page_size and current_index <= keys[-1]:
             if current_index in indexed_data:
                 data.append(indexed_data[current_index])
             current_index += 1
