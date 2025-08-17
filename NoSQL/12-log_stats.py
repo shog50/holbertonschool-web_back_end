@@ -1,30 +1,35 @@
 #!/usr/bin/env python3
-"""Display some stats about Nginx logs stored in MongoDB"""
+"""
+Provides some stats about Nginx logs stored in MongoDB
+"""
 
 from pymongo import MongoClient
 
 
-def main():
-    """Main function to display logs stats"""
-    client = MongoClient('mongodb://127.0.0.1:27017')
-    db = client.logs
-    collection = db.nginx
+def log_stats():
+    """
+    Prints statistics about Nginx logs stored in MongoDB
+    """
+    client = MongoClient("mongodb://127.0.0.1:27017")
+    collection = client.logs.nginx
 
-    # Total logs
+    # total logs
     total_logs = collection.count_documents({})
     print(f"{total_logs} logs")
 
-    # Methods count
-    methods = ["GET", "POST", "PUT", "PATCH", "DELETE"]
+    # methods
     print("Methods:")
-    for method in methods:
-        count = collection.count_documents({"method": method})
-        print(f"\tmethod {method}: {count}")
+    methods = ["GET", "POST", "PUT", "PATCH", "DELETE"]
+    for m in methods:
+        count = collection.count_documents({"method": m})
+        print(f"\tmethod {m}: {count}")
 
-    # Status check: GET /status
-    status_count = collection.count_documents({"method": "GET", "path": "/status"})
-    print(f"{status_count} status check")
+    # status check
+    status_checks = collection.count_documents(
+        {"method": "GET", "path": "/status"}
+    )
+    print(f"{status_checks} status check")
 
 
 if __name__ == "__main__":
-    main()
+    log_stats()
