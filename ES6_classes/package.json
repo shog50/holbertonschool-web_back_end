@@ -1,0 +1,15 @@
+{
+  "name": "es6_classes",
+  "version": "1.0.0",
+  "main": "0-classroom.js",
+  "type": "module",
+  "scripts": {
+    "dev": "node 0-main.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}
+
