@@ -1,29 +1,49 @@
-import HolbertonCourse from './2-hbtn_course.js';
+class HolbertonCourse {
+  constructor(name, length, students) {
+    this.name = name;
+    this.length = length;
+    this.students = students;
+  }
 
-describe('HolbertonCourse constructor type checks', () => {
-  test('should throw TypeError if name is not a string', () => {
-    expect(() => {
-      new HolbertonCourse(10, 20, ["Lucie", "Guillaume"]);
-    }).toThrow(TypeError);
-  });
+  get name() {
+    return this._name;
+  }
 
-  test('should throw TypeError if length is not a number', () => {
-    expect(() => {
-      new HolbertonCourse('PHP', '20', ["Lucie", "Guillaume"]);
-    }).toThrow(TypeError);
-  });
+  set name(name) {
+    if (typeof name === 'string') {
+      this._name = name;
+    } else {
+      throw new TypeError('Name must be a string');
+    }
+  }
 
-  test('should throw TypeError if students is not an array', () => {
-    expect(() => {
-      new HolbertonCourse('Python', 20, 'Lucie');
-    }).toThrow(TypeError);
-  });
+  get length() {
+    return this._length;
+  }
 
-  test('should create object correctly if types are valid', () => {
-    const course = new HolbertonCourse('JavaScript', 6, ['Bob', 'Jane']);
-    expect(course.name).toBe('JavaScript');
-    expect(course.length).toBe(6);
-    expect(course.students).toEqual(['Bob', 'Jane']);
-  });
-});
+  set length(length) {
+    if (typeof length === 'number') {
+      this._length = length;
+    } else {
+      throw new TypeError('Length must be a number');
+    }
+  }
+
+  get students() {
+    return this._students;
+  }
+
+  set students(students) {
+    if (
+      Array.isArray(students)
+      && students.every((s) => typeof s === 'string')
+    ) {
+      this._students = students;
+    } else {
+      throw new TypeError('Students must be an array of strings');
+    }
+  }
+}
+
+export default HolbertonCourse;
 
