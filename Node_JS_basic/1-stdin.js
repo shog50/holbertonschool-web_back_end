@@ -1,9 +1,7 @@
-process.stdout.write('Welcome to Holberton School, what is your name?\n');
+const displayMessage = require('./0-console');
 
-process.stdin.on('data', (data) => {
-  const name = data.toString().trim();
-  console.log(`Your name is: ${name}`);
-  console.log('This important software is now closing');
-  process.exit(0);
-});
+displayMessage('Welcome to Holberton School, what is your name?');
 
+process.stdin.on('data', (data) => process.stdout.write(`Your name is: ${data}`));
+
+process.stdin.on('end', () => displayMessage('This important software is now closing'));
